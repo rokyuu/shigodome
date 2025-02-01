@@ -41,7 +41,7 @@ function addColorEntry() {
         [targetLocation.x, targetLocation.y, targetLocation.z]
     );
     
-    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 40);
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 120);
     rubberBand *= random([-1, 1]); 
     
     let r = constrain(floor(red(currentColor) + random(-rubberBand, rubberBand)), 0, 255);
@@ -99,8 +99,8 @@ function draw() {
         fill(entry.r, entry.g, entry.b);
         rect(50, i * 50 + 10, 100, 40);
         fill(0);
-        text(`(${i + 1}) ID: ${entry.id} Distance: ${entry.distance}`, 160, i * 50 + 35);
-        text(`Distance from currentColor: ${entry.distanceFromCurrentLocation}`, 160, i * 50 + 50);
+        text(`(${i + 1}) ID: ${entry.id} Distance: ${floor(entry.distance)}`, 160, i * 50 + 35);
+        text(`Distance from currentColor: ${floor(entry.distanceFromCurrentLocation)}`, 160, i * 50 + 50);
         text(`r: ${entry.r} g: ${entry.g} b: ${entry.b}`, 160, i * 50 + 65);
     }
 
