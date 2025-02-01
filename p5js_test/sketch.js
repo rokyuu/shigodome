@@ -33,38 +33,36 @@ function winGame() {
 
 function generateColorOptions() {
     colorEntries = [];
+    let distanceToTarget = euclideanDistance(
+        [red(currentColor), green(currentColor), blue(currentColor)],
+        [red(targetColor), green(targetColor), blue(targetColor)]
+    );
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 60);
+    
     for (let i = 0; i < 3; i++) {
-        addColorEntry();
+        addColorEntry(rubberBand);
     }
 }
 
-function addColorEntry() {
+function addColorEntry(rubberBand) {
     let id = colorEntries.length + 1;
     
-    let currentLocation = mapColorToLocation(currentColor);
-    let targetLocation = mapColorToLocation(targetColor);
-    let distanceToTarget = euclideanDistance(
-        [currentLocation.x, currentLocation.y, currentLocation.z],
-        [targetLocation.x, targetLocation.y, targetLocation.z]
-    );
+    let innerBand=rubberBand*id;
+    innerBand *= random([-1, 1]); 
     
-    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 40);
-    rubberBand=rubberBand*id;
-    rubberBand *= random([-1, 1]); 
-    
-    let r = constrain(floor(red(currentColor) + random(-rubberBand, rubberBand)), 0, 255);
-    let g = constrain(floor(green(currentColor) + random(-rubberBand, rubberBand)), 0, 255);
-    let b = constrain(floor(blue(currentColor) + random(-rubberBand, rubberBand)), 0, 255);
+    let r = constrain(floor(red(currentColor) + random(-innerBand, innerBand)), 0, 255);
+    let g = constrain(floor(green(currentColor) + random(-innerBand, innerBand)), 0, 255);
+    let b = constrain(floor(blue(currentColor) + random(-innerBand, innerBand)), 0, 255);
 
     let location = mapColorToLocation([r, g, b]);
     let distance = euclideanDistance(
-        [location.x, location.y, location.z],
-        [targetLocation.x, targetLocation.y, targetLocation.z]
+        [r, g, b],
+        [red(targetColor), green(targetColor), blue(targetColor)]
     );
 
     let distanceFromCurrentLocation = euclideanDistance(
-        [location.x, location.y, location.z],
-        [currentLocation.x, currentLocation.y, currentLocation.z]
+        [r, g, b],
+        [red(currentColor), green(currentColor), blue(currentColor)]
     );
 
     let rank = random(10);
