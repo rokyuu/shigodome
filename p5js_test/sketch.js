@@ -10,12 +10,7 @@ class ColorEntry {
         this.b = b;
         this.distance = distance;
         this.rank = rank;
-        this.location = this.calculateLocation();
-    }
-
-    calculateLocation() {
-        // Map RGB to 3D coordinates (X = R, Y = G, Z = B)
-        return { x: this.r, y: this.g, z: this.b };
+        this.location = mapColorToLocation([r, g, b]);
     }
 }
 
@@ -30,9 +25,7 @@ function addColorEntry() {
     let b = floor(random(256));
 
     let location = mapColorToLocation([r, g, b]);
-    console.warn("location is "+location.x+", "+location.y+", "+location.z);
     let targetLocation = mapColorToLocation(targetColor);
-    console.warn("targetLocation is "+targetLocation.x+", "+targetLocation.y+", "+targetLocation.z);
 
     let distance = euclideanDistance([location.x,location.y,location.z], [targetLocation.x,targetLocation.y,targetLocation.z]);
 
