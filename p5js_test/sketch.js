@@ -37,7 +37,7 @@ function generateColorOptions() {
         [red(currentColor), green(currentColor), blue(currentColor)],
         [red(targetColor), green(targetColor), blue(targetColor)]
     );
-    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 60);
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 10, 40);
     
     for (let i = 0; i < 3; i++) {
         addColorEntry(rubberBand);
@@ -47,14 +47,13 @@ function generateColorOptions() {
 function addColorEntry(rubberBand) {
     let id = colorEntries.length + 1;
     
-    let innerBand=rubberBand*id;
+    let innerBand=rubberBand*2*id;
     innerBand *= random([-1, 1]); 
     
     let r = constrain(floor(red(currentColor) + random(-innerBand, innerBand)), 0, 255);
     let g = constrain(floor(green(currentColor) + random(-innerBand, innerBand)), 0, 255);
     let b = constrain(floor(blue(currentColor) + random(-innerBand, innerBand)), 0, 255);
 
-    let location = mapColorToLocation([r, g, b]);
     let distance = euclideanDistance(
         [r, g, b],
         [red(targetColor), green(targetColor), blue(targetColor)]
