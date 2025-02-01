@@ -11,52 +11,70 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4ti2a")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="mbox_interact" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -400.0
-offset_top = -200.0
-offset_right = -252.0
-offset_bottom = -134.0
+offset_left = -652.0
+offset_top = -348.0
+offset_right = -52.0
+offset_bottom = -48.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="GridContainer" type="GridContainer" parent="."]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -400.0
-offset_top = -200.0
-grow_horizontal = 0
-grow_vertical = 0
+[node name="GridContainer" type="GridContainer" parent="mbox_interact"]
+layout_mode = 2
 columns = 2
 
-[node name="opt1" type="Button" parent="GridContainer"]
+[node name="opt1" type="Button" parent="mbox_interact/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "option 1"
 
-[node name="opt2" type="Button" parent="GridContainer"]
+[node name="opt2" type="Button" parent="mbox_interact/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "option 2"
 
-[node name="opt3" type="Button" parent="GridContainer"]
+[node name="opt3" type="Button" parent="mbox_interact/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 text = "option 3"
 
-[node name="ColorRect" type="ColorRect" parent="GridContainer"]
+[node name="ColorRect" type="ColorRect" parent="mbox_interact/GridContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="mbox_goblin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 120.0
+offset_top = -423.0
+offset_right = 376.0
+offset_bottom = -46.0
+grow_vertical = 0
+
+[node name="ColorRect" type="ColorRect" parent="mbox_goblin"]
+layout_mode = 2
+
+[node name="mbox_gobfeels" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 50.0
+offset_top = 50.0
+offset_right = -102.0
+offset_bottom = 170.0
+grow_horizontal = 2
+
+[node name="ColorRect2" type="ColorRect" parent="mbox_gobfeels"]
+layout_mode = 2
