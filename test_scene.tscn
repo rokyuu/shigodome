@@ -1,6 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://b2682okmchid1"]
+[gd_scene load_steps=5 format=3 uid="uid://b2682okmchid1"]
 
 [ext_resource type="Script" path="res://test_scene.gd" id="1_4ti2a"]
+[ext_resource type="Texture2D" uid="uid://c5xmhrwlnq3gw" path="res://assets/PNG/Grey/Default/button_rectangle_depth_gradient.png" id="2_r5s4i"]
+[ext_resource type="Texture2D" uid="uid://2eibb1sepp2p" path="res://assets/PNG/Grey/Default/button_rectangle_depth_flat.png" id="3_7t6rn"]
+[ext_resource type="Texture2D" uid="uid://ix37p2ngf8sn" path="res://assets/bog.jpg" id="4_y81fy"]
 
 [node name="test_scene" type="Control"]
 layout_mode = 3
@@ -11,7 +14,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_4ti2a")
 
-[node name="mbox_interact" type="MarginContainer" parent="."]
+[node name="margbox_interact" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
@@ -25,34 +28,40 @@ offset_bottom = -48.0
 grow_horizontal = 0
 grow_vertical = 0
 
-[node name="GridContainer" type="GridContainer" parent="mbox_interact"]
+[node name="GridContainer" type="GridContainer" parent="margbox_interact"]
 layout_mode = 2
 columns = 2
 
-[node name="opt1" type="Button" parent="mbox_interact/GridContainer"]
+[node name="opt2" type="TextureButton" parent="margbox_interact/GridContainer"]
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("2_r5s4i")
+
+[node name="opt1" type="TextureButton" parent="margbox_interact/GridContainer"]
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+texture_normal = ExtResource("2_r5s4i")
+
+[node name="opt3" type="TextureButton" parent="margbox_interact/GridContainer"]
+z_index = 1
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 6
+disabled = true
+texture_normal = ExtResource("3_7t6rn")
+flip_v = true
+
+[node name="ColorRect" type="ColorRect" parent="margbox_interact/GridContainer"]
+z_index = 1
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "option 1"
 
-[node name="opt2" type="Button" parent="mbox_interact/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "option 2"
-
-[node name="opt3" type="Button" parent="mbox_interact/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-text = "option 3"
-
-[node name="ColorRect" type="ColorRect" parent="mbox_interact/GridContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="mbox_goblin" type="MarginContainer" parent="."]
+[node name="margbox_goblin" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -63,18 +72,43 @@ offset_right = 376.0
 offset_bottom = -46.0
 grow_vertical = 0
 
-[node name="ColorRect" type="ColorRect" parent="mbox_goblin"]
+[node name="ColorRect" type="ColorRect" parent="margbox_goblin"]
 layout_mode = 2
 
-[node name="mbox_gobfeels" type="MarginContainer" parent="."]
+[node name="margbox_gobfeels" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_left = 50.0
-offset_top = 50.0
+offset_top = 70.0
 offset_right = -102.0
-offset_bottom = 170.0
+offset_bottom = 190.0
 grow_horizontal = 2
 
-[node name="ColorRect2" type="ColorRect" parent="mbox_gobfeels"]
+[node name="ColorRect2" type="ColorRect" parent="margbox_gobfeels"]
 layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 30.0
+offset_top = 20.0
+offset_right = -222.0
+offset_bottom = 55.0
+grow_horizontal = 2
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="texrec_bg" type="TextureRect" parent="."]
+z_index = -1
+z_as_relative = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_y81fy")
+expand_mode = 1
