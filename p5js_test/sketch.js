@@ -37,7 +37,7 @@ function generateColorOptions() {
         [red(currentColor), green(currentColor), blue(currentColor)],
         [red(targetColor), green(targetColor), blue(targetColor)]
     );
-    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 10, 40);
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 3, 40);
     
     for (let i = 0; i < 3; i++) {
         addColorEntry(rubberBand);
@@ -135,7 +135,7 @@ function keyPressed() {
                 [red(targetColor), green(targetColor), blue(targetColor)]
             );
             console.warn("winDistance: "+winDistance);
-            if(winDistance<=60) winGame();
+            if(winDistance<=45) winGame();
             else generateColorOptions();
         }
     }
