@@ -42,6 +42,7 @@ function generateColorOptions() {
     for (let i = 0; i < 3; i++) {
         addColorEntry(rubberBand);
     }
+    rankColorEntries();
 }
 
 function addColorEntry(rubberBand) {
@@ -64,10 +65,18 @@ function addColorEntry(rubberBand) {
         [red(currentColor), green(currentColor), blue(currentColor)]
     );
 
-    let rank = random(10);
+    let rank = 0;
 
     let newEntry = new ColorEntry(id, r, g, b, distance, rank, distanceFromCurrentLocation);
     colorEntries.push(newEntry);
+}
+
+function rankColorEntries() {
+    colorEntries.sort((a, b) => a.distance - b.distance);
+    for (let i = 0; i < colorEntries.length; i++) {
+        colorEntries[i].rank = i + 1;
+    }
+    colorEntries.sort((a, b) => a.id - b.id);
 }
 
 function clearColorEntries() {
@@ -106,7 +115,7 @@ function draw() {
             fill(entry.r, entry.g, entry.b);
             rect(50, i * 50 + 10, 100, 40);
             fill(0);
-            text(`(${i + 1}) ID: ${entry.id} Distance: ${floor(entry.distance)}`, 160, i * 50 + 35);
+            text(`(${i + 1}) ID: ${entry.id}, Rank: ${entry.rank}, Distance: ${floor(entry.distance)}`, 160, i * 50 + 35);
             text(`Distance from currentColor: ${floor(entry.distanceFromCurrentLocation)}`, 160, i * 50 + 50);
             text(`r: ${entry.r} g: ${entry.g} b: ${entry.b}`, 160, i * 50 + 65);
         }
