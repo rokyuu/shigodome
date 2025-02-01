@@ -1,6 +1,7 @@
 let originColor, targetColor, currentColor;
 let colorEntries = [];
 let gameActive = false;
+let gameWon = false;
 
 class ColorEntry {
     constructor(id, r, g, b, distance, rank, distanceFromCurrentLocation) {
@@ -21,7 +22,13 @@ function startGame() {
     currentColor = originColor;
     colorEntries = [];
     gameActive = true;
+    gameWon = false;
     generateColorOptions();
+}
+
+function winGame() {
+    gameActive = false;
+    gameWon = true;
 }
 
 function generateColorOptions() {
@@ -41,7 +48,8 @@ function addColorEntry() {
         [targetLocation.x, targetLocation.y, targetLocation.z]
     );
     
-    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 120);
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 5, 40);
+    rubberBand=rubberBand*id;
     rubberBand *= random([-1, 1]); 
     
     let r = constrain(floor(red(currentColor) + random(-rubberBand, rubberBand)), 0, 255);
@@ -87,27 +95,34 @@ function setup() {
 
 function draw() {
     background(220);
-    fill(currentColor);
-    rect(450, 50, 100, 100);
-    fill(targetColor);
-    rect(650, 50, 100, 100);
     fill(originColor);
-    rect(25, 25, 25, 25);
+    rect(450, 50, 50, 50);
+    fill(currentColor);
+    rect(525, 50, 50, 50);
+    fill(targetColor);
+    rect(600, 50, 50, 50);
 
-    for (let i = 0; i < colorEntries.length; i++) {
-        let entry = colorEntries[i];
-        fill(entry.r, entry.g, entry.b);
-        rect(50, i * 50 + 10, 100, 40);
-        fill(0);
-        text(`(${i + 1}) ID: ${entry.id} Distance: ${floor(entry.distance)}`, 160, i * 50 + 35);
-        text(`Distance from currentColor: ${floor(entry.distanceFromCurrentLocation)}`, 160, i * 50 + 50);
-        text(`r: ${entry.r} g: ${entry.g} b: ${entry.b}`, 160, i * 50 + 65);
+    if(gameActive)
+    {
+        for (let i = 0; i < colorEntries.length; i++) {
+            let entry = colorEntries[i];
+            fill(entry.r, entry.g, entry.b);
+            rect(50, i * 50 + 10, 100, 40);
+            fill(0);
+            text(`(${i + 1}) ID: ${entry.id} Distance: ${floor(entry.distance)}`, 160, i * 50 + 35);
+            text(`Distance from currentColor: ${floor(entry.distanceFromCurrentLocation)}`, 160, i * 50 + 50);
+            text(`r: ${entry.r} g: ${entry.g} b: ${entry.b}`, 160, i * 50 + 65);
+        }
     }
 
     fill(0);
     text(`currentColor; r: ${String(red(currentColor))} g: ${String(green(currentColor))} b: ${String(blue(currentColor))}`, 400, 180);
     text(`targetColor; r: ${String(red(targetColor))} g: ${String(green(targetColor))} b: ${String(blue(targetColor))}`, 400, 200);
-    text("Press 1-3 to select an option", 400, 220);
+    if(gameActive) text("Press 1-3 to select an option", 400, 220);
+    if(gameWon){
+        fill(color(255,0,0));
+        text("You win!!!!! Waow!!!!", 400, 260);
+    }
 }
 
 function keyPressed() {
@@ -118,7 +133,13 @@ function keyPressed() {
         let index = int(key) - 1;
         if (colorEntries[index]) {
             currentColor = color(colorEntries[index].r, colorEntries[index].g, colorEntries[index].b);
-            generateColorOptions();
+            let winDistance = euclideanDistance(
+                [red(currentColor), green(currentColor), blue(currentColor)],
+                [red(targetColor), green(targetColor), blue(targetColor)]
+            );
+            console.warn("winDistance: "+winDistance);
+            if(winDistance<=60) winGame();
+            else generateColorOptions();
         }
     }
 }
