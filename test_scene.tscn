@@ -88,19 +88,6 @@ grow_horizontal = 2
 [node name="ColorRect2" type="ColorRect" parent="margbox_gobfeels"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 1
-anchors_preset = 10
-anchor_right = 1.0
-offset_left = 30.0
-offset_top = 20.0
-offset_right = -222.0
-offset_bottom = 55.0
-grow_horizontal = 2
-
-[node name="TextureProgressBar" type="TextureProgressBar" parent="MarginContainer"]
-layout_mode = 2
-
 [node name="texrec_bg" type="TextureRect" parent="."]
 z_index = -1
 z_as_relative = false
