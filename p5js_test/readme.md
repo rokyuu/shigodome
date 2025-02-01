@@ -1,6 +1,6 @@
 This was a test demo to show the validity of my idea for having the player essentially navigate a 3d matrix using these color speech bubbles. The loop is as follows
 
-```
+
 //Pseudocode let's go
 //The entire game is navigating a 3d matrix of red, green and blue)
 
@@ -60,4 +60,3 @@ while(currentColor!=targetColor)
 
 goblinSay.YouWin();
 
-```
