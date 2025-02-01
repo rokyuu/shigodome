@@ -1,3 +1,5 @@
+To start the live page run the command ```npx live-server```
+
 This was a test demo to show the validity of my idea for having the player essentially navigate a 3d matrix using these color speech bubbles. The loop is as follows
 
 
