@@ -61,4 +61,3 @@ while(currentColor!=targetColor)
 }
 
 goblinSay.YouWin();
-
