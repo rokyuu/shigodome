@@ -2,7 +2,8 @@ let originColor, targetColor, currentColor;
 let colorEntries = [];
 let gameActive = false;
 let gameWon = false;
-let latestRank = 0;
+let rankLatest = 0;
+let rankPrevious = rankLatest;
 
 class ColorEntry {
     constructor(id, r, g, b, distance, rank, distanceFromCurrentLocation) {
@@ -22,7 +23,8 @@ function startGame() {
     targetColor = color(floor(random(256)), floor(random(256)), floor(random(256)));
     currentColor = originColor;
     colorEntries = [];
-    latestRank = 0;
+    rankLatest = 0;
+    rankPrevious = rankLatest;
     gameActive = true;
     gameWon = false;
     generateColorOptions();
@@ -116,10 +118,30 @@ function draw() {
     fill(0);
     textSize(24);
     textAlign(CENTER);
-    if(latestRank==0)text("(^ _ ^)/", 100, 250);
-    if(latestRank==1)text("(*^▽^*)", 100, 250); //1 is happy
-    if(latestRank==2)text("(´д｀; )", 100, 250); //2 is confused
-    if(latestRank==3)text("(；¬＿¬)", 100, 250); //3 is angry!!!!
+    if(gameWon){
+        text("(｡♥‿♥｡)", 100, 250);
+    }
+    else{
+        if(rankLatest==0)text("\ (^ _ ^)/", 100, 250);//Intro emotion
+        else{
+            if(rankPrevious<=1)//Previous emotion intro or happy
+            {
+                if(rankLatest==1)text("(*^▽^*)", 100, 250); //1 is happy
+                if(rankLatest==2)text("( •᷄ὤ•᷅)", 100, 250); //2 is confused
+                if(rankLatest==3)text("(・□・; )", 100, 250); //3 is angry!!!!
+            }
+            else if(rankPrevious==2){//Previous emotion confused
+                if(rankLatest==1)text("(*^▽^*)", 100, 250); //1 is happy
+                if(rankLatest==2)text("(´д｀; )", 100, 250); //2 is confused
+                if(rankLatest==3)text("(；¬＿¬)", 100, 250); //3 is angry!!!!
+            }
+            else{//Previous emotion angry!!!
+                if(rankLatest==1)text("(*•̀ᴗ•́*)و ", 100, 250); //1 is happy
+                if(rankLatest==2)text("(´д｀; )", 100, 250); //2 is confused
+                if(rankLatest==3)text("(!'►,◄)\ \ \ \n \ \ \ \ \ \ \ ┌П┐", 100, 250); //3 is angry!!!!
+            }
+        }
+    }
     ///// GOBLIN CODE
     textSize(12);
     textAlign(LEFT);
@@ -179,7 +201,8 @@ function keyPressed() {
         let index = int(key) - 1;
         if (colorEntries[index]) {
             currentColor = color(colorEntries[index].r, colorEntries[index].g, colorEntries[index].b);
-            latestRank = colorEntries[index].rank;
+            rankPrevious = rankLatest;
+            rankLatest = colorEntries[index].rank;
             let winDistance = euclideanDistance(
                 [red(currentColor), green(currentColor), blue(currentColor)],
                 [red(targetColor), green(targetColor), blue(targetColor)]
