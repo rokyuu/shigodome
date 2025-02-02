@@ -293,8 +293,8 @@
      gameWon = false;
    
      // Initialize Color Boxes after setting colors
-     currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
-     targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
+     currentColorBox = new ColorBox(10, 10, 20, 20, currentColor);
+     targetColorBox = new ColorBox(40, 10, 20, 20, targetColor);
    
      generateColorOptions();
    }
