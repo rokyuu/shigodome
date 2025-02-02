@@ -199,7 +199,7 @@ let targetColorBox;
 let colorOptions = [];
 
 function setup() {
-    createCanvas(550, 400);
+    createCanvas(1024, 600);
     goblin = new Goblin();
     currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
     targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
@@ -225,7 +225,7 @@ function draw() {
         text("Press 1-3 to select an option", 350, 330);
     } 
     if (gameWon) {
-        fill(color(255, 0, 0));
+        fill(color(0, 0, 0));
         text("You win!!!!! Waow!!!!", 350, 330);
     }
 }
