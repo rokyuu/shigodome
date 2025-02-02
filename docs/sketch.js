@@ -179,8 +179,8 @@ function triggerSpeechBubble() {
           // Set target positions based on the canvas dimensions:
           if (this.index === 0) {
             // First option: left middle side.
-            this.targetX = width * 0.20;
-            this.targetY = height * 0.5;
+            this.targetX = width * 0.12;
+            this.targetY = height * 0.4;
           } else if (this.index === 1) {
             // Second option: randomly choose between top middle left or top middle right.
             if (random() < 0.5) {
@@ -420,15 +420,11 @@ function draw() {
     // otherwise, show gobbub.png.
     push();
     imageMode(CENTER);
-    if (millis() - bubbleStartTime < bubbleDuration) {
       tint(currentColor);
-      image(speechBubbleImage, width / 6, height / 2 + 150);
-    } else {
-      // Optionally, reset the flag if needed:
+      image(speechBubbleImage, width / 7, height / 2 + 170);
       showBubble = false;
       tint(targetColor);
-      image(gobbubImage, 1.7*width / 3, height / 2 + 250);
-    }
+      image(gobbubImage, 1.8*width / 3, height / 2 + 240);
     pop();
   }
   
