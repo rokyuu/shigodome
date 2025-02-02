@@ -473,7 +473,7 @@ function draw() {
     console.log("Key pressed:", key);
     
     // Convert the key to lowercase to catch both 's' and 'S'
-    if (key.toLowerCase() === 's') {
+    if (key.toLowerCase() === ' ') {
       startGame();
     }
     
