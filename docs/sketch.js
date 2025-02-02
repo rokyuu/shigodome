@@ -50,7 +50,7 @@ function preload() {
     janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
     janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
 
-    bgMusic = loadSound("images/music/gametheme.mp3");
+    bgMusic = loadSound("images/music/shigodometheme.wav");
   }
   
       
@@ -440,7 +440,7 @@ function draw() {
       bgMusic.loop(); // Start and loop forever
       musicStarted = true;
   }
-  
+
      if (gameActive) {
        for (let i = 0; i < colorOptions.length; i++) {
          if (colorOptions[i].contains(mouseX, mouseY)) {
