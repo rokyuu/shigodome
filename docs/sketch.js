@@ -23,6 +23,8 @@
    let bubbleDuration = 1000; // Duration in milliseconds (1 second)
    let showBubble = false;
    
+   let bgMusic;
+   let musicStarted=false;
 
 
    
@@ -47,6 +49,8 @@ function preload() {
     janesplatImages.push(loadImage("images/janesplats/splat4f1.png"));
     janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
     janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
+
+    bgMusic = loadSound("images/music/gametheme.mp3");
   }
   
       
@@ -432,6 +436,11 @@ function draw() {
    
    // Use mouse clicks to select a splat option
    function mousePressed() {
+    if (!musicStarted) {
+      bgMusic.loop(); // Start and loop forever
+      musicStarted = true;
+  }
+  
      if (gameActive) {
        for (let i = 0; i < colorOptions.length; i++) {
          if (colorOptions[i].contains(mouseX, mouseY)) {
