@@ -138,6 +138,10 @@
           this.index = index;
           this.colorValue = colorValue;
           
+          // Compute a secondary color that's 20% toward black from the main color.
+          // You can adjust the 0.2 to be a stronger or weaker difference.
+          this.secondaryColor = lerpColor(this.colorValue, color(0, 0, 0), 0.2);
+          
           // Set target positions based on the canvas dimensions:
           if (this.index === 0) {
             // First option: left middle side.
@@ -201,8 +205,8 @@
           this.cache.clear();
           this.cache.push();
           this.cache.imageMode(CENTER);
-          // Draw border copies with a black tint.
-          this.cache.tint(0);
+          // Draw border copies with the secondary color tint.
+          this.cache.tint(this.secondaryColor);
           for (let i = 0; i < this.iterations; i++) {
             let angle = (TWO_PI / this.iterations) * i;
             let offsetX = this.borderSize * cos(angle);
@@ -217,7 +221,7 @@
           }
           this.cache.pop();
           
-          // Draw the main splat image tinted with the option's color.
+          // Draw the main splat image tinted with the option's main color.
           this.cache.push();
           this.cache.imageMode(CENTER);
           this.cache.tint(this.colorValue);
@@ -230,10 +234,10 @@
           );
           this.cache.pop();
           
-          // Draw the option number on top.
+          // Draw the option number on top using the secondary color.
           this.cache.push();
           this.cache.textAlign(CENTER, CENTER);
-          this.cache.fill(0);
+          this.cache.fill(this.secondaryColor);
           this.cache.textSize(24);
           this.cache.text(`${this.index + 1}`, this.cacheW / 2, this.cacheH / 2);
           this.cache.pop();
@@ -274,6 +278,7 @@
           pop();
         }
       }
+      
       
       
       
