@@ -16,29 +16,35 @@
    let splatImages = []; // global array for the splat images
    let janesplatImages = []; // global array for the new splat images
    let goblinImage;
-
-   let speechBubbleImage;
-    let bubbleStartTime = 0;
-    let bubbleDuration = 1000; // Duration in milliseconds (1 second)
-    let showBubble = false;
+   
+   let speechBubbleImage;  // This is our "youbub.png"
+   let gobbubImage;        // New: for "gobbub.png"
+   let bubbleStartTime = 0;
+   let bubbleDuration = 1000; // Duration in milliseconds (1 second)
+   let showBubble = false;
+   
 
 
    
    /* ============================================
-      p5.js Preload Function
-      ============================================ */
-      function preload() {
-        goblinImage = loadImage("images/goblin/gobbase.png");
-        speechBubbleImage = loadImage("images/speechbubs/youbub.png");
-        
-        // Load the janesplat images
-        janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
-        janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
-        janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
-        janesplatImages.push(loadImage("images/janesplats/splat4f1.png"));
-        janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
-        janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
-      }
+   p5.js Preload Function
+   ============================================ */
+function preload() {
+    goblinImage = loadImage("images/goblin/gobbase.png");
+    
+    // Load the speech bubble images
+    speechBubbleImage = loadImage("images/speechbubs/youbub.png");
+    gobbubImage = loadImage("images/speechbubs/gobbub.png"); // New image
+    
+    // Load the janesplat images
+    janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
+    janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
+    janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
+    janesplatImages.push(loadImage("images/janesplats/splat4f1.png"));
+    janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
+    janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
+  }
+  
       
    
    /* ============================================
@@ -55,10 +61,12 @@
      };
    }
    
-   function triggerSpeechBubble() {
+   // This function triggers the "active" speech bubble.
+function triggerSpeechBubble() {
     bubbleStartTime = millis();
     showBubble = true;
   }
+  
   
    /* ============================================
       Class Definitions
@@ -390,7 +398,10 @@
      startGame();
    }
    
-   function draw() {
+   /* ============================================
+   p5.js Callback Functions
+   ============================================ */
+function draw() {
     background(220);
   
     goblin.updateExpression();
@@ -404,24 +415,23 @@
       colorOptions[i].draw();
     }
   
-    // Draw the speech bubble if it is active.
-    if (showBubble) {
-      // Check if the bubble duration has passed.
-      if (millis() - bubbleStartTime < bubbleDuration) {
-        push();
-        imageMode(CENTER);
-        // Tint the speech bubble with the currentColor (like the splats).
-        tint(currentColor);
-        // Position the bubble above the goblin.
-        // Adjust the position as needed. Here, it is drawn above the goblin image.
-        image(speechBubbleImage, width/6, height/2 + 150);
-        pop();
-      } else {
-        // After bubbleDuration, stop showing the bubble.
-        showBubble = false;
-      }
+    // Always display a speech bubble:
+    // If the bubble duration has not expired, show youbub.png tinted with currentColor;
+    // otherwise, show gobbub.png.
+    push();
+    imageMode(CENTER);
+    if (millis() - bubbleStartTime < bubbleDuration) {
+      tint(currentColor);
+      image(speechBubbleImage, width / 6, height / 2 + 150);
+    } else {
+      // Optionally, reset the flag if needed:
+      showBubble = false;
+      tint(targetColor);
+      image(gobbubImage, 1.7*width / 3, height / 2 + 250);
     }
+    pop();
   }
+  
   
    
    // Use mouse clicks to select a splat option
