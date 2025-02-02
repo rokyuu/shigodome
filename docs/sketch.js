@@ -11,7 +11,7 @@
    let goblin;
    let currentColorBox;
    let targetColorBox;
-   let splat; // our new Splat object
+   let splat; // our main splat object
    
    let splatImages = []; // global array for the splat images
    
@@ -19,10 +19,9 @@
       p5.js Preload Function
       ============================================ */
    function preload() {
-     // Load all splat images from splat00.png to splat35.png
+     // Load all splat images (splat00.png to splat35.png)
      for (let i = 0; i < 36; i++) {
-       // Format the number as a two-digit string (e.g., "00", "01", ... "35")
-       let indexStr = nf(i, 2);
+       let indexStr = nf(i, 2); // formats number as two digits
        splatImages.push(loadImage("images/splat/splat" + indexStr + ".png"));
      }
    }
@@ -118,60 +117,40 @@
      }
    }
    
-   class ColorOption {
-     constructor(index, colorValue) {
-       this.index = index;
-       this.colorValue = colorValue;
-       this.x = 212 + (index * 100);
-       this.y = 195;
-       this.width = 75;
-       this.height = 65;
-     }
-   
-     draw() {
-       fill(this.colorValue);
-       rect(this.x, this.y, this.width, this.height, 3);
-       fill(0);
-       textSize(24);
-       textAlign(CENTER);
-       text(`${this.index + 1}`, this.x + this.width / 2, this.y + 40);
-     }
-   }
-   
    /* ============================================
-      Splat Class
+      SplatOption Class (New)
       ============================================ */
    /*
-     The Splat class renders your transparent PNG with a border effect.
-     It draws several border copies (with a black tint) around the main image using offsets,
-     then draws the main image on top.
-     
-     In this version, each Splat instance picks a random image from the splatImages array.
+     The SplatOption class is used for the color option selections.
+     Instead of a simple rectangle, it renders a splat (with a border effect)
+     that is tinted to the option's color.
    */
-   class Splat {
+   class SplatOption {
      /**
-      * @param {number} x - The x-coordinate for the center of the image.
-      * @param {number} y - The y-coordinate for the center of the image.
-      * @param {number} scale - Scale factor for the image size.
-      * @param {number} borderSize - How far from the center each border copy is drawn.
-      * @param {number} iterations - How many border copies to draw around the center.
+      * @param {number} index - The index of this option (used for positioning and label).
+      * @param {p5.Color} colorValue - The color this option represents.
+      * @param {number} scale - Scale factor for the splat image.
+      * @param {number} borderSize - Offset for the border copies.
+      * @param {number} iterations - How many border copies to draw.
       */
-     constructor(x, y, scale = 1, borderSize = 10, iterations = 12) {
-       this.x = x;
-       this.y = y;
+     constructor(index, colorValue, scale = 0.2, borderSize = 1, iterations = 5) {
+       this.index = index;
+       this.colorValue = colorValue;
+       // Position the option similarly to the original ColorOption:
+       this.x = 212 + (index * 100);
+       this.y = 195;
        this.scale = scale;
        this.borderSize = borderSize;
        this.iterations = iterations;
-       // Pick a random splat image from the preloaded array.
+       // Pick a random splat image for this option:
        this.img = random(splatImages);
      }
      
      draw() {
        push();
        imageMode(CENTER);
-       tint(0); // Black tint for the border copies
-   
-       // Draw border copies around a circle using offsets
+       // Draw border copies around a circle (with black tint)
+       tint(0);
        for (let i = 0; i < this.iterations; i++) {
          let angle = (TWO_PI / this.iterations) * i;
          let offsetX = cos(angle) * this.borderSize;
@@ -186,8 +165,10 @@
        }
        pop();
        
-       // Draw the main image on top without tint
+       // Draw the main splat image tinted with the option color
+       push();
        imageMode(CENTER);
+       tint(this.colorValue);
        image(
          this.img,
          this.x,
@@ -195,6 +176,15 @@
          this.img.width * this.scale,
          this.img.height * this.scale
        );
+       pop();
+       
+       // Optionally, draw the option number on top for reference:
+       push();
+       textAlign(CENTER, CENTER);
+       fill(0);
+       textSize(24);
+       text(`${this.index + 1}`, this.x, this.y);
+       pop();
      }
    }
    
@@ -235,8 +225,8 @@
      
      for (let i = 0; i < 3; i++) {
        addColorEntry(rubberBand);
-       // Fix: Correct color property reference when creating a ColorOption
-       colorOptions.push(new ColorOption(i, color(colorEntries[i].r, colorEntries[i].g, colorEntries[i].b)));
+       // Create a SplatOption for each color entry:
+       colorOptions.push(new SplatOption(i, color(colorEntries[i].r, colorEntries[i].g, colorEntries[i].b)));
      }
      rankColorEntries();
    }
@@ -288,8 +278,7 @@
      goblin = new Goblin();
      currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
      targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
-     // Create a Splat object at a desired location (e.g., near the right side)
-     splat = new Splat(800, 150, 0.5, 5);
+     // Create a Splat object (used in other parts of the sketch)
      startGame();
    }
    
@@ -302,15 +291,14 @@
      currentColorBox.draw();
      targetColorBox.draw();
    
+     // Draw each color option (now rendered as splats)
      for (let i = 0; i < colorOptions.length; i++) {
        colorOptions[i].draw();
      }
    
-     // Draw the splat image with its border effect
-     splat.draw();
-   
      textSize(18);
      textAlign(CENTER);
+     fill(0);
      if (gameActive) {
        text("Press 1-3 to select an option", 350, 330);
      } 
