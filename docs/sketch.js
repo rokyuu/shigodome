@@ -194,7 +194,7 @@ function draw() {
 }
 
 function keyPressed() {
-    if (gameActive && (key === 's')) {
+    if ((key === 's')) {
         startGame();
     }
     if (gameActive && (key >= '1' && key <= '3')) {
@@ -207,7 +207,7 @@ function keyPressed() {
                 [red(currentColor), green(currentColor), blue(currentColor)],
                 [red(targetColor), green(targetColor), blue(targetColor)]
             );
-            if(winDistance<=45) 
+            if(winDistance<=60) 
             {
                 currentColor = targetColor;
                 winGame();
