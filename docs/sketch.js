@@ -24,6 +24,9 @@
         janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat4f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
       }
    
    /* ============================================
