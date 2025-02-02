@@ -15,7 +15,7 @@
    
    let splatImages = []; // global array for the splat images
    let janesplatImages = []; // global array for the new splat images
-   let goblinImage;
+   let goblinImages = [];
    
    let speechBubbleImage;  // This is our "youbub.png"
    let gobbubImage;        // New: for "gobbub.png"
@@ -30,8 +30,11 @@
    p5.js Preload Function
    ============================================ */
 function preload() {
-    goblinImage = loadImage("images/goblin/gobbase.png");
-    
+    goblinImages[0] = loadImage("images/goblin/gobbase.png");
+    goblinImages[1] = loadImage("images/goblin/gobhappy.png");
+    goblinImages[2] = loadImage("images/goblin/gobmid.png");
+    goblinImages[3] = loadImage("images/goblin/gobanger.png");
+  
     // Load the speech bubble images
     speechBubbleImage = loadImage("images/speechbubs/youbub.png");
     gobbubImage = loadImage("images/speechbubs/gobbub.png"); // New image
@@ -92,41 +95,36 @@ function triggerSpeechBubble() {
     }
   
     updateExpression() {
-      if (gameWon) {
-        this.expression = "(｡♥‿♥｡)";
-      } else if (rankLatest == 0) {
-        this.expression = "(^ _ ^)/";
-      } else {
-        if (rankPrevious <= 1) {
-          if (rankLatest == 1) this.expression = "(*^▽^*)";
-          if (rankLatest == 2) this.expression = "( •᷄ὤ•᷅)";
-          if (rankLatest == 3) this.expression = "(・□・; )";
-        } else if (rankPrevious == 2) {
-          if (rankLatest == 1) this.expression = "(*^▽^*)";
-          if (rankLatest == 2) this.expression = "(´д｀; )";
-          if (rankLatest == 3) this.expression = "(；¬＿¬)";
-        } else {
-          if (rankLatest == 1) this.expression = "(*•̀ᴗ•́*)و ";
-          if (rankLatest == 2) this.expression = "(´д｀; )";
-          if (rankLatest == 3) this.expression = "(!'►,◄) ┌П┐";
-        }
-      }
     }
   
     draw() {
-      // Set the image mode to CENTER so that the image is drawn centered.
+      // Set the image mode to CENTER
       imageMode(CENTER);
-      // Draw the goblin image at the center of the canvas using its natural size.
-      image(goblinImage, width / 2, 1.8* height / 3);
-      
-      // Draw the expression text for debugging or as an overlay.
-      fill(0);
-      textSize(24);
-      textAlign(CENTER);
-      // You can adjust the y position if you want the text somewhere else.
-      text(this.expression, width / 2, height / 2 + 50);
+  
+      // Select the correct goblin image based on rankLatest
+      let currentGoblin;
+      switch (rankLatest) {
+        case 0:
+          currentGoblin = goblinImages[0]; // gobbase.png
+          break;
+        case 1:
+          currentGoblin = goblinImages[1]; // gobhappy.png
+          break;
+        case 2:
+          currentGoblin = goblinImages[2]; // gobmid.png
+          break;
+        case 3:
+          currentGoblin = goblinImages[3]; // gobanger.png
+          break;
+        default:
+          currentGoblin = goblinImages[0]; // Fallback to gobbase.png
+      }
+  
+      // Draw the selected goblin image
+      image(currentGoblin, width / 2, 1.8 * height / 3);
     }
   }
+  
   
    
    class ColorBox {
