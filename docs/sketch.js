@@ -34,6 +34,7 @@ function preload() {
     goblinImages[1] = loadImage("images/goblin/gobhappy.png");
     goblinImages[2] = loadImage("images/goblin/gobmid.png");
     goblinImages[3] = loadImage("images/goblin/gobanger.png");
+    goblinImages[4] = loadImage("images/goblin/gobexite.png");
   
     // Load the speech bubble images
     speechBubbleImage = loadImage("images/speechbubs/youbub.png");
@@ -115,6 +116,9 @@ function triggerSpeechBubble() {
           break;
         case 3:
           currentGoblin = goblinImages[3]; // gobanger.png
+          break;
+        case 4:
+          currentGoblin = goblinImages[4]; // gobexcite.png
           break;
         default:
           currentGoblin = goblinImages[0]; // Fallback to gobbase.png
@@ -317,6 +321,7 @@ function triggerSpeechBubble() {
    function winGame() {
      gameActive = false;
      gameWon = true;
+     rankLatest=4;
    }
    
    function generateColorOptions() {
