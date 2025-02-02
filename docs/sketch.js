@@ -135,7 +135,7 @@
          * @param {number} borderSize - Offset for the border copies.
          * @param {number} iterations - How many border copies to draw.
          */
-        constructor(index, colorValue, img, scale = 0.35, borderSize = 2, iterations = 5) {
+        constructor(index, colorValue, img, scale = 0.7, borderSize = 2, iterations = 5) {
           this.index = index;
           this.colorValue = colorValue;
           this.img = img; // Use the image passed in
@@ -146,21 +146,21 @@
           // Set target positions based on the canvas dimensions:
           if (this.index === 0) {
             // First option: left middle side.
-            this.targetX = width * 0.25;
+            this.targetX = width * 0.20;
             this.targetY = height * 0.5;
           } else if (this.index === 1) {
             // Second option: randomly choose between top middle left or top middle right.
             if (random() < 0.5) {
-              this.targetX = width * 0.4;
-              this.targetY = height * 0.3;
+              this.targetX = width * 0.3;
+              this.targetY = height * 0.2;
             } else {
-              this.targetX = width * 0.6;
-              this.targetY = height * 0.3;
+              this.targetX = width * 0.65;
+              this.targetY = height * 0.25;
             }
           } else if (this.index === 2) {
             // Third option: right middle side.
             this.targetX = width * 0.75;
-            this.targetY = height * 0.5;
+            this.targetY = height * 0.6;
           }
           
           this.scale = scale;
@@ -200,46 +200,33 @@
         }
         
         renderToCache() {
-          this.cache.clear();
-          this.cache.push();
-          this.cache.imageMode(CENTER);
-          // Draw border copies with the secondary color tint.
-          this.cache.tint(this.secondaryColor);
-          for (let i = 0; i < this.iterations; i++) {
-            let angle = (TWO_PI / this.iterations) * i;
-            let offsetX = this.borderSize * cos(angle);
-            let offsetY = this.borderSize * sin(angle);
-            this.cache.image(
-              this.img,
-              this.cacheW / 2 + offsetX,
-              this.cacheH / 2 + offsetY,
-              this.img.width * this.scale,
-              this.img.height * this.scale
-            );
-          }
-          this.cache.pop();
+            // Clear the cache.
+            this.cache.clear();
           
-          // Draw the main splat image tinted with the option's main color.
-          this.cache.push();
-          this.cache.imageMode(CENTER);
-          this.cache.tint(this.colorValue);
-          this.cache.image(
+            // Draw the filled part (the image is all white and light gray)
+            this.cache.push();
+            this.cache.imageMode(CENTER);
+            this.cache.tint(this.colorValue); // this will turn white into the desired color
+            this.cache.image(
             this.img,
             this.cacheW / 2,
             this.cacheH / 2,
             this.img.width * this.scale,
             this.img.height * this.scale
-          );
-          this.cache.pop();
+            );
+            this.cache.pop();
+
           
-          // Draw the option number on top using the secondary color.
-          this.cache.push();
-          this.cache.textAlign(CENTER, CENTER);
-          this.cache.fill(this.secondaryColor);
-          this.cache.textSize(24);
-          this.cache.text(`${this.index + 1}`, this.cacheW / 2, this.cacheH / 2);
-          this.cache.pop();
-        }
+            // 4. Draw the option number on top using the secondary color.
+            this.cache.push();
+            this.cache.textAlign(CENTER, CENTER);
+            this.cache.fill(this.secondaryColor);
+            this.cache.textSize(24);
+            this.cache.text(`${this.index + 1}`, this.cacheW / 2, this.cacheH / 2);
+            this.cache.pop();
+          }
+          
+          
         
         update() {
           if (!this.arrived) {
