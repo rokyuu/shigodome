@@ -58,10 +58,10 @@
    
    class Goblin {
      constructor() {
-       this.x = 50;
+       this.x = width/2-100;
        this.y = 200;
-       this.width = 100;
-       this.height = 150;
+       this.width = width/6;
+       this.height = 300;
        this.cornerRadius = 25;
        this.expression = "(^ _ ^)/"; // Default expression
      }
@@ -358,17 +358,6 @@
      // Draw each color option (now rendered as splats that drift slightly)
      for (let i = 0; i < colorOptions.length; i++) {
        colorOptions[i].draw();
-     }
-   
-     textSize(18);
-     textAlign(CENTER);
-     fill(0);
-     if (gameActive) {
-       text("Press 1-3 to select an option", 350, 330);
-     } 
-     if (gameWon) {
-       fill(color(0, 0, 0));
-       text("You win!!!!! Waow!!!!", 350, 330);
      }
    }
    
