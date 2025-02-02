@@ -138,19 +138,19 @@
           this.index = index;
           this.colorValue = colorValue;
           
-          // Use canvas dimensions to determine target positions:
+          // Set target positions based on the canvas dimensions:
           if (this.index === 0) {
             // First option: left middle side.
             this.targetX = width * 0.25;
-            this.targetY = height * 0.4;
+            this.targetY = height * 0.5;
           } else if (this.index === 1) {
             // Second option: randomly choose between top middle left or top middle right.
             if (random() < 0.5) {
               this.targetX = width * 0.4;
-              this.targetY = height * 0.2;
+              this.targetY = height * 0.3;
             } else {
-              this.targetX = width * 0.7;
-              this.targetY = height * 0.25;
+              this.targetX = width * 0.6;
+              this.targetY = height * 0.3;
             }
           } else if (this.index === 2) {
             // Third option: right middle side.
@@ -161,10 +161,9 @@
           this.scale = scale;
           this.borderSize = borderSize;
           this.iterations = iterations;
-          // Pick a random splat image:
           this.img = random(splatImages);
           
-          // Choose an initial position off-screen (for the "shoot into place" effect):
+          // Choose an initial position off-screen for the "shoot into place" effect:
           let side = floor(random(4));
           switch (side) {
             case 0: // Top
@@ -185,17 +184,19 @@
               break;
           }
           
-          this.arrived = false; // Whether it reached its target
+          this.arrived = false;
           
-          // Create an off-screen graphics buffer for caching the composite splat.
-          // We assume the final width and height (with some extra margin).
+          // We'll set these noise offsets once the option arrives:
+          this.noiseOffsetX = 0;
+          this.noiseOffsetY = 0;
+          
+          // Create an off-screen graphics buffer for caching the composite splat:
           this.cacheW = this.img.width * this.scale + 10;
           this.cacheH = this.img.height * this.scale + 10;
           this.cache = createGraphics(this.cacheW, this.cacheH);
           this.renderToCache();
         }
         
-        // Render the composite splat (borders and tinted main image) to the off-screen cache.
         renderToCache() {
           this.cache.clear();
           this.cache.push();
@@ -238,21 +239,28 @@
           this.cache.pop();
         }
         
-        // Animate the option toward its target; then add slight drifting.
+        // Animate the option toward its target; then add a "bubbly" noise-driven motion.
         update() {
           if (!this.arrived) {
+            // Move smoothly toward the target.
             this.x = lerp(this.x, this.targetX, 0.1);
             this.y = lerp(this.y, this.targetY, 0.1);
             if (dist(this.x, this.y, this.targetX, this.targetY) < 1) {
               this.arrived = true;
+              // Once arrived, set random noise offsets.
+              this.noiseOffsetX = random(1000);
+              this.noiseOffsetY = random(1000);
             }
           } else {
-            this.x += random(-0.5, 0.5);
-            this.y += random(-0.5, 0.5);
+            // Use Perlin noise for a smooth, bubbly oscillation.
+            let t = millis() * 0.001; // time in seconds
+            let amplitude = 25; // Adjust for desired movement amplitude
+            this.x = this.targetX + map(noise(this.noiseOffsetX + t), 0, 1, -amplitude, amplitude);
+            this.y = this.targetY + map(noise(this.noiseOffsetY + t), 0, 1, -amplitude, amplitude);
           }
         }
         
-        // Check if a given coordinate is within this splat's clickable area.
+        // Check if a coordinate is within this splat's clickable area.
         contains(mx, my) {
           let d = dist(mx, my, this.x, this.y);
           return d < (this.img.width * this.scale) / 2;
@@ -260,13 +268,13 @@
         
         draw() {
           this.update();
-          // Draw the cached composite image instead of re-rendering every element.
           push();
           imageMode(CENTER);
           image(this.cache, this.x, this.y);
           pop();
         }
       }
+      
       
       
    
