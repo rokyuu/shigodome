@@ -123,7 +123,8 @@
    /*
      The SplatOption class is used for the color option selections.
      Instead of a simple rectangle, it renders a splat (with a border effect)
-     that is tinted to the option's color.
+     that is tinted to the option's color. It also drifts slightly via its update() method
+     and is clickable via the contains() method.
    */
    class SplatOption {
      /**
@@ -146,7 +147,20 @@
        this.img = random(splatImages);
      }
      
+     // Slightly change position each frame to give a "drifting" effect.
+     update() {
+       this.x += random(-1, 1);
+       this.y += random(-1, 1);
+     }
+     
+     // Check if a given (mx, my) coordinate is within this splat's clickable area.
+     contains(mx, my) {
+       let d = dist(mx, my, this.x, this.y);
+       return d < (this.img.width * this.scale) / 2;
+     }
+     
      draw() {
+       this.update(); // update position before drawing
        push();
        imageMode(CENTER);
        // Draw border copies around a circle (with black tint)
@@ -278,7 +292,7 @@
      goblin = new Goblin();
      currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
      targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
-     // Create a Splat object (used in other parts of the sketch)
+     // Start the game (which will create the color options)
      startGame();
    }
    
@@ -291,7 +305,7 @@
      currentColorBox.draw();
      targetColorBox.draw();
    
-     // Draw each color option (now rendered as splats)
+     // Draw each color option (now rendered as splats that drift slightly)
      for (let i = 0; i < colorOptions.length; i++) {
        colorOptions[i].draw();
      }
@@ -308,6 +322,40 @@
      }
    }
    
+   // Use mouse clicks to select a splat option
+   function mousePressed() {
+     if (gameActive) {
+       for (let i = 0; i < colorOptions.length; i++) {
+         if (colorOptions[i].contains(mouseX, mouseY)) {
+           // When a splat option is clicked, update the current color.
+           currentColor = colorOptions[i].colorValue;
+           currentColorBox.updateColor(currentColor);
+   
+           rankPrevious = rankLatest;
+           rankLatest = colorEntries[i].rank;
+   
+           let winDistance = euclideanDistance(
+             [red(currentColor), green(currentColor), blue(currentColor)],
+             [red(targetColor), green(targetColor), blue(targetColor)]
+           );
+   
+           if (winDistance <= 60) {
+             currentColor = targetColor;
+             currentColorBox.updateColor(targetColor);
+             winGame();
+           } else {
+             generateColorOptions();
+           }
+   
+           // Update the goblin's expression on selection
+           goblin.updateExpression();
+           break; // Only process one splat click per mouse press.
+         }
+       }
+     }
+   }
+   
+   // You can still use keys if desired.
    function keyPressed() {
      if (key === 's') {
        startGame();
