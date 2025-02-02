@@ -254,7 +254,7 @@ function triggerSpeechBubble() {
             this.cache.push();
             this.cache.textAlign(CENTER, CENTER);
             this.cache.fill(this.secondaryColor);
-            this.cache.textSize(24);
+            this.cache.textSize(36);
             this.cache.text(`${this.index + 1}`, this.cacheW / 2, this.cacheH / 2);
             this.cache.pop();
           }
