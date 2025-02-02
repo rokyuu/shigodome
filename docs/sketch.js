@@ -14,17 +14,17 @@
    let splat; // our main splat object
    
    let splatImages = []; // global array for the splat images
+   let janesplatImages = []; // global array for the new splat images
    
    /* ============================================
       p5.js Preload Function
       ============================================ */
-   function preload() {
-     // Load all splat images (splat00.png to splat35.png)
-     for (let i = 0; i < 36; i++) {
-       let indexStr = nf(i, 2); // formats number as two digits
-       splatImages.push(loadImage("images/splat/splat" + indexStr + ".png"));
-     }
-   }
+      function preload() {
+        // Load the three images
+        janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
+      }
    
    /* ============================================
       Utility Functions
@@ -130,16 +130,17 @@
         /**
          * @param {number} index - The index of this option (used for positioning and label).
          * @param {p5.Color} colorValue - The color this option represents.
+         * @param {p5.Image} img - The splat image to use (unique for each option).
          * @param {number} scale - Scale factor for the splat image.
          * @param {number} borderSize - Offset for the border copies.
          * @param {number} iterations - How many border copies to draw.
          */
-        constructor(index, colorValue, scale = 0.35, borderSize = 2, iterations = 5) {
+        constructor(index, colorValue, img, scale = 0.35, borderSize = 2, iterations = 5) {
           this.index = index;
           this.colorValue = colorValue;
-          
+          this.img = img; // Use the image passed in
+      
           // Compute a secondary color that's 20% toward black from the main color.
-          // You can adjust the 0.2 to be a stronger or weaker difference.
           this.secondaryColor = lerpColor(this.colorValue, color(0, 0, 0), 0.2);
           
           // Set target positions based on the canvas dimensions:
@@ -165,7 +166,6 @@
           this.scale = scale;
           this.borderSize = borderSize;
           this.iterations = iterations;
-          this.img = random(splatImages);
           
           // Choose an initial position off-screen for the "shoot into place" effect:
           let side = floor(random(4));
@@ -189,8 +189,6 @@
           }
           
           this.arrived = false;
-          
-          // We'll set these noise offsets once the option arrives:
           this.noiseOffsetX = 0;
           this.noiseOffsetY = 0;
           
@@ -243,28 +241,23 @@
           this.cache.pop();
         }
         
-        // Animate the option toward its target; then add a "bubbly" noise-driven motion.
         update() {
           if (!this.arrived) {
-            // Move smoothly toward the target.
             this.x = lerp(this.x, this.targetX, 0.1);
             this.y = lerp(this.y, this.targetY, 0.1);
             if (dist(this.x, this.y, this.targetX, this.targetY) < 1) {
               this.arrived = true;
-              // Once arrived, set random noise offsets.
               this.noiseOffsetX = random(1000);
               this.noiseOffsetY = random(1000);
             }
           } else {
-            // Use Perlin noise for a smooth, bubbly oscillation.
-            let t = millis() * 0.001; // time in seconds
-            let amplitude = 25; // Adjust for desired movement amplitude
+            let t = millis() * 0.001;
+            let amplitude = 25;
             this.x = this.targetX + map(noise(this.noiseOffsetX + t), 0, 1, -amplitude, amplitude);
             this.y = this.targetY + map(noise(this.noiseOffsetY + t), 0, 1, -amplitude, amplitude);
           }
         }
         
-        // Check if a coordinate is within this splat's clickable area.
         contains(mx, my) {
           let d = dist(mx, my, this.x, this.y);
           return d < (this.img.width * this.scale) / 2;
@@ -278,6 +271,7 @@
           pop();
         }
       }
+      
       
       
       
@@ -310,21 +304,30 @@
    }
    
    function generateColorOptions() {
-     colorEntries = [];
-     colorOptions = [];
-     let distanceToTarget = euclideanDistance(
-       [red(currentColor), green(currentColor), blue(currentColor)],
-       [red(targetColor), green(targetColor), blue(targetColor)]
-     );
-     let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 3, 40);
-     
-     for (let i = 0; i < 3; i++) {
-       addColorEntry(rubberBand);
-       // Create a SplatOption for each color entry:
-       colorOptions.push(new SplatOption(i, color(colorEntries[i].r, colorEntries[i].g, colorEntries[i].b)));
-     }
-     rankColorEntries();
-   }
+    colorEntries = [];
+    colorOptions = [];
+    let distanceToTarget = euclideanDistance(
+      [red(currentColor), green(currentColor), blue(currentColor)],
+      [red(targetColor), green(targetColor), blue(targetColor)]
+    );
+    let rubberBand = map(log(distanceToTarget + 1), log(1), log(441.67 + 1), 3, 40);
+    
+    // First, generate the color entries:
+    for (let i = 0; i < 3; i++) {
+      addColorEntry(rubberBand);
+    }
+    rankColorEntries();
+    
+    // Now, make a copy of the janesplatImages array and shuffle it.
+    let availableImages = janesplatImages.slice();
+    shuffle(availableImages, true); // Shuffle in place
+    
+    // Create a SplatOption for each color entry, assigning a unique image.
+    for (let i = 0; i < 3; i++) {
+      colorOptions.push(new SplatOption(i, color(colorEntries[i].r, colorEntries[i].g, colorEntries[i].b), availableImages[i]));
+    }
+  }
+  
    
    function addColorEntry(rubberBand) {
      let id = colorEntries.length + 1;
