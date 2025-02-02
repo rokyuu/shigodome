@@ -58,10 +58,10 @@
    
    class Goblin {
      constructor() {
-       this.x = width/2-100;
-       this.y = 200;
+       this.x = width/2-width/(6*2);
+       this.y = height/2 - 100;
        this.width = width/6;
-       this.height = 300;
+       this.height = height/2;
        this.cornerRadius = 25;
        this.expression = "(^ _ ^)/"; // Default expression
      }
