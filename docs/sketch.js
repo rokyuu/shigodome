@@ -410,11 +410,8 @@ function draw() {
     goblin.updateExpression();
     goblin.draw();
   
-    currentColorBox.draw();
-    targetColorBox.draw();
-  
     // Draw each color option (splat options)
-    for (let i = 0; i < colorOptions.length; i++) {
+    for (let i = 0; (i < colorOptions.length) && gameActive; i++) {
       colorOptions[i].draw();
     }
   
