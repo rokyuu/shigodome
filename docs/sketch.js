@@ -11,6 +11,17 @@
    let goblin;
    let currentColorBox;
    let targetColorBox;
+   let splat; // our new Splat object
+   
+   let splatImage; // global variable for the splat image
+   
+   /* ============================================
+      p5.js Preload Function
+      ============================================ */
+   function preload() {
+     // Load your splat image (ensure the path is correct)
+     splatImage = loadImage("images/splat/splat00.png");
+   }
    
    /* ============================================
       Utility Functions
@@ -124,6 +135,64 @@
    }
    
    /* ============================================
+      Splat Class
+      ============================================ */
+   /*
+     The Splat class renders your transparent PNG with a border effect.
+     It first draws a slightly larger, black-tinted version of the image as the border,
+     and then draws the original image on top.
+   */
+     class Splat {
+        /**
+         * @param {number} x - The x-coordinate for the center of the image.
+         * @param {number} y - The y-coordinate for the center of the image.
+         * @param {number} scale - Scale factor for the image size.
+         * @param {number} borderSize - How far from the center each border copy is drawn.
+         * @param {number} iterations - How many border copies to draw around the center.
+         */
+        constructor(x, y, scale = 1, borderSize = 10, iterations = 12) {
+          this.x = x;
+          this.y = y;
+          this.scale = scale;
+          this.borderSize = borderSize;
+          this.iterations = iterations;
+          this.img = splatImage; // splatImage should be loaded in preload()
+        }
+        
+        draw() {
+          push();
+          imageMode(CENTER);
+          tint(0); // Black tint for the border copies
+      
+          // Draw border copies around a circle
+          for (let i = 0; i < this.iterations; i++) {
+            let angle = (TWO_PI / this.iterations) * i;
+            let offsetX = cos(angle) * this.borderSize;
+            let offsetY = sin(angle) * this.borderSize;
+            image(
+              this.img,
+              this.x + offsetX,
+              this.y + offsetY,
+              this.img.width * this.scale,
+              this.img.height * this.scale
+            );
+          }
+          pop();
+          
+          // Draw the main image on top without tint
+          imageMode(CENTER);
+          image(
+            this.img,
+            this.x,
+            this.y,
+            this.img.width * this.scale,
+            this.img.height * this.scale
+          );
+        }
+      }
+      
+      
+   /* ============================================
       Game Logic Functions
       ============================================ */
    function startGame() {
@@ -209,9 +278,12 @@
       ============================================ */
    function setup() {
      createCanvas(1024, 600);
+     imageMode(CENTER); // Set a default image mode for consistency
      goblin = new Goblin();
      currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
      targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
+     // Create a Splat object at a desired location (e.g., near the right side)
+     splat = new Splat(800, 150, 0.5, 5);
      startGame();
    }
    
@@ -227,6 +299,9 @@
      for (let i = 0; i < colorOptions.length; i++) {
        colorOptions[i].draw();
      }
+   
+     // Draw the splat image with its border effect
+     splat.draw();
    
      textSize(18);
      textAlign(CENTER);
