@@ -134,12 +134,30 @@
          * @param {number} borderSize - Offset for the border copies.
          * @param {number} iterations - How many border copies to draw.
          */
-        constructor(index, colorValue, scale = 0.2, borderSize = 1, iterations = 5) {
+        constructor(index, colorValue, scale = 0.35, borderSize = 2, iterations = 5) {
           this.index = index;
           this.colorValue = colorValue;
-          // Final target position for this option:
-          this.targetX = 212 + (index * 100);
-          this.targetY = 195;
+          
+          // Use canvas dimensions to determine target positions:
+          if (this.index === 0) {
+            // First option: left middle side.
+            this.targetX = width * 0.25;
+            this.targetY = height * 0.4;
+          } else if (this.index === 1) {
+            // Second option: randomly choose between top middle left or top middle right.
+            if (random() < 0.5) {
+              this.targetX = width * 0.4;
+              this.targetY = height * 0.2;
+            } else {
+              this.targetX = width * 0.7;
+              this.targetY = height * 0.25;
+            }
+          } else if (this.index === 2) {
+            // Third option: right middle side.
+            this.targetX = width * 0.75;
+            this.targetY = height * 0.5;
+          }
+          
           this.scale = scale;
           this.borderSize = borderSize;
           this.iterations = iterations;
@@ -169,8 +187,8 @@
           
           this.arrived = false; // Whether it reached its target
           
-          // Create an off-screen graphics buffer for caching the composite splat
-          // Here, we assume the splat's final width and height (with some extra margin)
+          // Create an off-screen graphics buffer for caching the composite splat.
+          // We assume the final width and height (with some extra margin).
           this.cacheW = this.img.width * this.scale + 10;
           this.cacheH = this.img.height * this.scale + 10;
           this.cache = createGraphics(this.cacheW, this.cacheH);
@@ -190,8 +208,8 @@
             let offsetY = this.borderSize * sin(angle);
             this.cache.image(
               this.img,
-              this.cacheW/2 + offsetX,
-              this.cacheH/2 + offsetY,
+              this.cacheW / 2 + offsetX,
+              this.cacheH / 2 + offsetY,
               this.img.width * this.scale,
               this.img.height * this.scale
             );
@@ -204,8 +222,8 @@
           this.cache.tint(this.colorValue);
           this.cache.image(
             this.img,
-            this.cacheW/2,
-            this.cacheH/2,
+            this.cacheW / 2,
+            this.cacheH / 2,
             this.img.width * this.scale,
             this.img.height * this.scale
           );
@@ -216,7 +234,7 @@
           this.cache.textAlign(CENTER, CENTER);
           this.cache.fill(0);
           this.cache.textSize(24);
-          this.cache.text(`${this.index + 1}`, this.cacheW/2, this.cacheH/2);
+          this.cache.text(`${this.index + 1}`, this.cacheW / 2, this.cacheH / 2);
           this.cache.pop();
         }
         
@@ -242,14 +260,14 @@
         
         draw() {
           this.update();
-          // Instead of redrawing all the border copies and tinted image,
-          // we just draw the cached composite image.
+          // Draw the cached composite image instead of re-rendering every element.
           push();
           imageMode(CENTER);
           image(this.cache, this.x, this.y);
           pop();
         }
       }
+      
       
    
    /* ============================================
