@@ -18,17 +18,106 @@ class ColorEntry {
     }
 }
 
+class Goblin {
+    constructor() {
+        this.x = 50;
+        this.y = 200;
+        this.width = 100;
+        this.height = 150;
+        this.cornerRadius = 25;
+        this.expression = "(^ _ ^)/"; // Default expression
+    }
+
+    updateExpression() {
+        if (gameWon) {
+            this.expression = "(｡♥‿♥｡)";
+        } else if (rankLatest == 0) {
+            this.expression = "(^ _ ^)/";
+        } else {
+            if (rankPrevious <= 1) {
+                if (rankLatest == 1) this.expression = "(*^▽^*)";
+                if (rankLatest == 2) this.expression = "( •᷄ὤ•᷅)";
+                if (rankLatest == 3) this.expression = "(・□・; )";
+            } else if (rankPrevious == 2) {
+                if (rankLatest == 1) this.expression = "(*^▽^*)";
+                if (rankLatest == 2) this.expression = "(´д｀; )";
+                if (rankLatest == 3) this.expression = "(；¬＿¬)";
+            } else {
+                if (rankLatest == 1) this.expression = "(*•̀ᴗ•́*)و ";
+                if (rankLatest == 2) this.expression = "(´д｀; )";
+                if (rankLatest == 3) this.expression = "(!'►,◄) ┌П┐";
+            }
+        }
+    }
+
+    draw() {
+        fill(color(65, 146, 75));
+        rect(this.x, this.y, this.width, this.height, this.cornerRadius);
+        fill(0);
+        textSize(24);
+        textAlign(CENTER);
+        text(this.expression, this.x + this.width / 2, this.y + 50);
+    }
+}
+
+class ColorBox {
+    constructor(x, y, width, height, colorValue) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.colorValue = colorValue;
+    }
+
+    updateColor(newColor) {
+        this.colorValue = newColor;
+    }
+
+    draw() {
+        fill(this.colorValue);
+        rect(this.x, this.y, this.width, this.height);
+    }
+}
+
+class ColorOption {
+    constructor(index, colorValue) {
+        this.index = index;
+        this.colorValue = colorValue;
+        this.x = 212 + (index * 100);
+        this.y = 195;
+        this.width = 75;
+        this.height = 65;
+    }
+
+    draw() {
+        fill(this.colorValue);
+        rect(this.x, this.y, this.width, this.height, 3);
+        fill(0);
+        textSize(24);
+        textAlign(CENTER);
+        text(`${this.index + 1}`, this.x + this.width / 2, this.y + 40);
+    }
+}
+
+
 function startGame() {
     originColor = color(floor(random(256)), floor(random(256)), floor(random(256)));
     targetColor = color(floor(random(256)), floor(random(256)), floor(random(256)));
     currentColor = originColor;
     colorEntries = [];
+    colorOptions = [];
     rankLatest = 0;
     rankPrevious = rankLatest;
     gameActive = true;
     gameWon = false;
+
+    // Initialize Color Boxes after setting colors
+    currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
+    targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
+
     generateColorOptions();
 }
+
 
 function winGame() {
     gameActive = false;
@@ -37,6 +126,7 @@ function winGame() {
 
 function generateColorOptions() {
     colorEntries = [];
+    colorOptions = [];
     let distanceToTarget = euclideanDistance(
         [red(currentColor), green(currentColor), blue(currentColor)],
         [red(targetColor), green(targetColor), blue(targetColor)]
@@ -45,9 +135,14 @@ function generateColorOptions() {
     
     for (let i = 0; i < 3; i++) {
         addColorEntry(rubberBand);
+
+        // Fix: Correct color property reference
+        colorOptions.push(new ColorOption(i, color(colorEntries[i].r, colorEntries[i].g, colorEntries[i].b)));
     }
     rankColorEntries();
 }
+
+
 
 function addColorEntry(rubberBand) {
     let id = colorEntries.length + 1;
@@ -98,100 +193,43 @@ function mapColorToLocation(p5Color) {
 const euclideanDistance = (a, b) =>
     Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
 
+let goblin;
+let currentColorBox;
+let targetColorBox;
+let colorOptions = [];
+
 function setup() {
     createCanvas(550, 400);
+    goblin = new Goblin();
+    currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
+    targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
     startGame();
 }
 
 function draw() {
     background(220);
-    //fill(color(10,10,10));
-    for(let i=0;(i<800)&&false;i+=50)
-    {
-        line(0, i, 800, i);
-        line(i, 0, i, 800);
-    }
 
-    ///// GOBLIN CODE
-    fill(color(65, 146, 75));
-    rect(50, 200, 100, 150, 25);
-    fill(0);
-    textSize(24);
-    textAlign(CENTER);
-    if(gameWon){
-        text("(｡♥‿♥｡)", 100, 250);
-    }
-    else{
-        if(rankLatest==0)text("\ (^ _ ^)/", 100, 250);//Intro emotion
-        else{
-            if(rankPrevious<=1)//Previous emotion intro or happy
-            {
-                if(rankLatest==1)text("(*^▽^*)", 100, 250); //1 is happy
-                if(rankLatest==2)text("( •᷄ὤ•᷅)", 100, 250); //2 is confused
-                if(rankLatest==3)text("(・□・; )", 100, 250); //3 is angry!!!!
-            }
-            else if(rankPrevious==2){//Previous emotion confused
-                if(rankLatest==1)text("(*^▽^*)", 100, 250); //1 is happy
-                if(rankLatest==2)text("(´д｀; )", 100, 250); //2 is confused
-                if(rankLatest==3)text("(；¬＿¬)", 100, 250); //3 is angry!!!!
-            }
-            else{//Previous emotion angry!!!
-                if(rankLatest==1)text("(*•̀ᴗ•́*)و ", 100, 250); //1 is happy
-                if(rankLatest==2)text("(´д｀; )", 100, 250); //2 is confused
-                if(rankLatest==3)text("(!'►,◄)\ \ \ \n \ \ \ \ \ \ \ ┌П┐", 100, 250); //3 is angry!!!!
-            }
-        }
-    }
-    ///// GOBLIN CODE
-    textSize(12);
-    textAlign(LEFT);
-    //fill(originColor);
-    //rect(450, 50, 50, 50);
-    fill(currentColor);
-    rect(200, 300, 300, 50);
+    goblin.updateExpression();
+    goblin.draw();
 
-    textSize(12);
-    textAlign(LEFT);
-    fill(targetColor);
-    rect(50, 50, 450, 100);
+    currentColorBox.draw();
+    targetColorBox.draw();
 
-    if(gameActive)
-    {
-        for (let i = 0; i < colorEntries.length; i++) {
-            let entry = colorEntries[i];
-            fill(entry.r, entry.g, entry.b);
-            rect(212 + (i * 100), 195, 75, 65, 3);
-            fill(0);
-            textSize(24);
-            textAlign(CENTER);
-            text(`${i+1}`, (250 + (i*100)), 235)
-            textSize(12);
-            textAlign(LEFT);
-            fill(0);
-            text(`(${i + 1}) ID: ${entry.id}, Rank: ${entry.rank}, Distance: ${floor(entry.distance)}`, 660, i * 50 + 35);
-            text(`Distance from currentColor: ${floor(entry.distanceFromCurrentLocation)}`, 660, i * 50 + 50);
-            text(`r: ${entry.r} g: ${entry.g} b: ${entry.b}`, 660, i * 50 + 65);
-        }
+    for (let i = 0; i < colorOptions.length; i++) {
+        colorOptions[i].draw();
     }
-
-    textSize(12);
-    textAlign(LEFT);
-    fill(0);
-    text(`currentColor; r: ${String(red(currentColor))} g: ${String(green(currentColor))} b: ${String(blue(currentColor))}`, 600, 180);
-    text(`targetColor; r: ${String(red(targetColor))} g: ${String(green(targetColor))} b: ${String(blue(targetColor))}`, 600, 200);
 
     textSize(18);
     textAlign(CENTER);
-    if(gameActive){
+    if (gameActive) {
         text("Press 1-3 to select an option", 350, 330);
     } 
-    if(gameWon){
-        fill(color(255,0,0));
+    if (gameWon) {
+        fill(color(255, 0, 0));
         text("You win!!!!! Waow!!!!", 350, 330);
     }
-    textSize(12);
-    textAlign(LEFT);
 }
+
 
 function keyPressed() {
     if ((key === 's')) {
@@ -201,18 +239,28 @@ function keyPressed() {
         let index = int(key) - 1;
         if (colorEntries[index]) {
             currentColor = color(colorEntries[index].r, colorEntries[index].g, colorEntries[index].b);
+            currentColorBox.updateColor(currentColor);
+
             rankPrevious = rankLatest;
             rankLatest = colorEntries[index].rank;
+
             let winDistance = euclideanDistance(
                 [red(currentColor), green(currentColor), blue(currentColor)],
                 [red(targetColor), green(targetColor), blue(targetColor)]
             );
-            if(winDistance<=60) 
-            {
+
+            if (winDistance <= 60) {
                 currentColor = targetColor;
+                currentColorBox.updateColor(targetColor);
                 winGame();
+            } else {
+                generateColorOptions();
             }
-            else generateColorOptions();
+
+            // Fix: Update Goblin's Expression on Selection
+            goblin.updateExpression();
         }
     }
 }
+
+
