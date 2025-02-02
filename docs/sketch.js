@@ -126,81 +126,118 @@
      that is tinted to the option's color. It also drifts slightly via its update() method
      and is clickable via the contains() method.
    */
-   class SplatOption {
-     /**
-      * @param {number} index - The index of this option (used for positioning and label).
-      * @param {p5.Color} colorValue - The color this option represents.
-      * @param {number} scale - Scale factor for the splat image.
-      * @param {number} borderSize - Offset for the border copies.
-      * @param {number} iterations - How many border copies to draw.
-      */
-     constructor(index, colorValue, scale = 0.2, borderSize = 1, iterations = 5) {
-       this.index = index;
-       this.colorValue = colorValue;
-       // Position the option similarly to the original ColorOption:
-       this.x = 212 + (index * 100);
-       this.y = 195;
-       this.scale = scale;
-       this.borderSize = borderSize;
-       this.iterations = iterations;
-       // Pick a random splat image for this option:
-       this.img = random(splatImages);
-     }
-     
-     // Slightly change position each frame to give a "drifting" effect.
-     update() {
-       this.x += random(-1, 1);
-       this.y += random(-1, 1);
-     }
-     
-     // Check if a given (mx, my) coordinate is within this splat's clickable area.
-     contains(mx, my) {
-       let d = dist(mx, my, this.x, this.y);
-       return d < (this.img.width * this.scale) / 2;
-     }
-     
-     draw() {
-       this.update(); // update position before drawing
-       push();
-       imageMode(CENTER);
-       // Draw border copies around a circle (with black tint)
-       tint(0);
-       for (let i = 0; i < this.iterations; i++) {
-         let angle = (TWO_PI / this.iterations) * i;
-         let offsetX = cos(angle) * this.borderSize;
-         let offsetY = sin(angle) * this.borderSize;
-         image(
-           this.img,
-           this.x + offsetX,
-           this.y + offsetY,
-           this.img.width * this.scale,
-           this.img.height * this.scale
-         );
-       }
-       pop();
-       
-       // Draw the main splat image tinted with the option color
-       push();
-       imageMode(CENTER);
-       tint(this.colorValue);
-       image(
-         this.img,
-         this.x,
-         this.y,
-         this.img.width * this.scale,
-         this.img.height * this.scale
-       );
-       pop();
-       
-       // Optionally, draw the option number on top for reference:
-       push();
-       textAlign(CENTER, CENTER);
-       fill(0);
-       textSize(24);
-       text(`${this.index + 1}`, this.x, this.y);
-       pop();
-     }
-   }
+     class SplatOption {
+        /**
+         * @param {number} index - The index of this option (used for positioning and label).
+         * @param {p5.Color} colorValue - The color this option represents.
+         * @param {number} scale - Scale factor for the splat image.
+         * @param {number} borderSize - Offset for the border copies.
+         * @param {number} iterations - How many border copies to draw.
+         */
+        constructor(index, colorValue, scale = 0.2, borderSize = 1, iterations = 5) {
+          this.index = index;
+          this.colorValue = colorValue;
+          // Final target position for this option:
+          this.targetX = 212 + (index * 100);
+          this.targetY = 195;
+          this.scale = scale;
+          this.borderSize = borderSize;
+          this.iterations = iterations;
+          // Pick a random splat image from the preloaded array:
+          this.img = random(splatImages);
+          
+          // Choose an initial position from one of the canvas borders.
+          // This will make the splat "shoot" in from off-screen.
+          let side = floor(random(4));
+          switch (side) {
+            case 0: // Top
+              this.x = random(width);
+              this.y = -50;
+              break;
+            case 1: // Bottom
+              this.x = random(width);
+              this.y = height + 50;
+              break;
+            case 2: // Left
+              this.x = -50;
+              this.y = random(height);
+              break;
+            case 3: // Right
+              this.x = width + 50;
+              this.y = random(height);
+              break;
+          }
+          
+          this.arrived = false; // Whether the splat has reached its target
+        }
+        
+        // Animate the option toward its target; once arrived, add slight drifting.
+        update() {
+          if (!this.arrived) {
+            // Lerp the position toward the target.
+            this.x = lerp(this.x, this.targetX, 0.1);
+            this.y = lerp(this.y, this.targetY, 0.1);
+            // When close enough, mark as arrived.
+            if (dist(this.x, this.y, this.targetX, this.targetY) < 1) {
+              this.arrived = true;
+            }
+          } else {
+            // Once arrived, add a slight random drift.
+            this.x += random(-0.5, 0.5);
+            this.y += random(-0.5, 0.5);
+          }
+        }
+        
+        // Check if a given (mx, my) coordinate is within this splat's clickable area.
+        contains(mx, my) {
+          let d = dist(mx, my, this.x, this.y);
+          return d < (this.img.width * this.scale) / 2;
+        }
+        
+        // Draw the splat option.
+        draw() {
+          this.update(); // Update position before drawing
+          
+          push();
+          imageMode(CENTER);
+          // Draw border copies (with black tint) for the border effect.
+          tint(0);
+          for (let i = 0; i < this.iterations; i++) {
+            let angle = (TWO_PI / this.iterations) * i;
+            let offsetX = cos(angle) * this.borderSize;
+            let offsetY = sin(angle) * this.borderSize;
+            image(
+              this.img,
+              this.x + offsetX,
+              this.y + offsetY,
+              this.img.width * this.scale,
+              this.img.height * this.scale
+            );
+          }
+          pop();
+          
+          // Draw the main splat image tinted with the option's color.
+          push();
+          imageMode(CENTER);
+          tint(this.colorValue);
+          image(
+            this.img,
+            this.x,
+            this.y,
+            this.img.width * this.scale,
+            this.img.height * this.scale
+          );
+          pop();
+          
+          // Optionally, draw the option number on top for reference.
+          push();
+          textAlign(CENTER, CENTER);
+          fill(0);
+          textSize(24);
+          text(`${this.index + 1}`, this.x, this.y);
+          pop();
+        }
+      }
    
    /* ============================================
       Game Logic Functions
