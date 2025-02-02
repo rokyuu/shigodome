@@ -143,11 +143,10 @@
           this.scale = scale;
           this.borderSize = borderSize;
           this.iterations = iterations;
-          // Pick a random splat image from the preloaded array:
+          // Pick a random splat image:
           this.img = random(splatImages);
           
-          // Choose an initial position from one of the canvas borders.
-          // This will make the splat "shoot" in from off-screen.
+          // Choose an initial position off-screen (for the "shoot into place" effect):
           let side = floor(random(4));
           switch (side) {
             case 0: // Top
@@ -168,76 +167,90 @@
               break;
           }
           
-          this.arrived = false; // Whether the splat has reached its target
+          this.arrived = false; // Whether it reached its target
+          
+          // Create an off-screen graphics buffer for caching the composite splat
+          // Here, we assume the splat's final width and height (with some extra margin)
+          this.cacheW = this.img.width * this.scale + 10;
+          this.cacheH = this.img.height * this.scale + 10;
+          this.cache = createGraphics(this.cacheW, this.cacheH);
+          this.renderToCache();
         }
         
-        // Animate the option toward its target; once arrived, add slight drifting.
+        // Render the composite splat (borders and tinted main image) to the off-screen cache.
+        renderToCache() {
+          this.cache.clear();
+          this.cache.push();
+          this.cache.imageMode(CENTER);
+          // Draw border copies with a black tint.
+          this.cache.tint(0);
+          for (let i = 0; i < this.iterations; i++) {
+            let angle = (TWO_PI / this.iterations) * i;
+            let offsetX = this.borderSize * cos(angle);
+            let offsetY = this.borderSize * sin(angle);
+            this.cache.image(
+              this.img,
+              this.cacheW/2 + offsetX,
+              this.cacheH/2 + offsetY,
+              this.img.width * this.scale,
+              this.img.height * this.scale
+            );
+          }
+          this.cache.pop();
+          
+          // Draw the main splat image tinted with the option's color.
+          this.cache.push();
+          this.cache.imageMode(CENTER);
+          this.cache.tint(this.colorValue);
+          this.cache.image(
+            this.img,
+            this.cacheW/2,
+            this.cacheH/2,
+            this.img.width * this.scale,
+            this.img.height * this.scale
+          );
+          this.cache.pop();
+          
+          // Draw the option number on top.
+          this.cache.push();
+          this.cache.textAlign(CENTER, CENTER);
+          this.cache.fill(0);
+          this.cache.textSize(24);
+          this.cache.text(`${this.index + 1}`, this.cacheW/2, this.cacheH/2);
+          this.cache.pop();
+        }
+        
+        // Animate the option toward its target; then add slight drifting.
         update() {
           if (!this.arrived) {
-            // Lerp the position toward the target.
             this.x = lerp(this.x, this.targetX, 0.1);
             this.y = lerp(this.y, this.targetY, 0.1);
-            // When close enough, mark as arrived.
             if (dist(this.x, this.y, this.targetX, this.targetY) < 1) {
               this.arrived = true;
             }
           } else {
-            // Once arrived, add a slight random drift.
             this.x += random(-0.5, 0.5);
             this.y += random(-0.5, 0.5);
           }
         }
         
-        // Check if a given (mx, my) coordinate is within this splat's clickable area.
+        // Check if a given coordinate is within this splat's clickable area.
         contains(mx, my) {
           let d = dist(mx, my, this.x, this.y);
           return d < (this.img.width * this.scale) / 2;
         }
         
-        // Draw the splat option.
         draw() {
-          this.update(); // Update position before drawing
-          
+          this.update();
+          // Instead of redrawing all the border copies and tinted image,
+          // we just draw the cached composite image.
           push();
           imageMode(CENTER);
-          // Draw border copies (with black tint) for the border effect.
-          tint(0);
-          for (let i = 0; i < this.iterations; i++) {
-            let angle = (TWO_PI / this.iterations) * i;
-            let offsetX = cos(angle) * this.borderSize;
-            let offsetY = sin(angle) * this.borderSize;
-            image(
-              this.img,
-              this.x + offsetX,
-              this.y + offsetY,
-              this.img.width * this.scale,
-              this.img.height * this.scale
-            );
-          }
-          pop();
-          
-          // Draw the main splat image tinted with the option's color.
-          push();
-          imageMode(CENTER);
-          tint(this.colorValue);
-          image(
-            this.img,
-            this.x,
-            this.y,
-            this.img.width * this.scale,
-            this.img.height * this.scale
-          );
-          pop();
-          
-          // Optionally, draw the option number on top for reference.
-          push();
-          textAlign(CENTER, CENTER);
-          fill(0);
-          textSize(24);
-          text(`${this.index + 1}`, this.x, this.y);
+          image(this.cache, this.x, this.y);
           pop();
         }
       }
+      
    
    /* ============================================
       Game Logic Functions
