@@ -17,13 +17,21 @@
    let janesplatImages = []; // global array for the new splat images
    let goblinImage;
 
+   let speechBubbleImage;
+    let bubbleStartTime = 0;
+    let bubbleDuration = 1000; // Duration in milliseconds (1 second)
+    let showBubble = false;
+
+
    
    /* ============================================
       p5.js Preload Function
       ============================================ */
       function preload() {
         goblinImage = loadImage("images/goblin/gobbase.png");
-        // Load the three images
+        speechBubbleImage = loadImage("images/speechbubs/youbub.png");
+        
+        // Load the janesplat images
         janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
@@ -31,6 +39,7 @@
         janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
       }
+      
    
    /* ============================================
       Utility Functions
@@ -46,6 +55,11 @@
      };
    }
    
+   function triggerSpeechBubble() {
+    bubbleStartTime = millis();
+    showBubble = true;
+  }
+  
    /* ============================================
       Class Definitions
       ============================================ */
@@ -377,19 +391,38 @@
    }
    
    function draw() {
-     background(220);
-   
-     goblin.updateExpression();
-     goblin.draw();
-   
-     currentColorBox.draw();
-     targetColorBox.draw();
-   
-     // Draw each color option (now rendered as splats that drift slightly)
-     for (let i = 0; i < colorOptions.length; i++) {
-       colorOptions[i].draw();
-     }
-   }
+    background(220);
+  
+    goblin.updateExpression();
+    goblin.draw();
+  
+    currentColorBox.draw();
+    targetColorBox.draw();
+  
+    // Draw each color option (splat options)
+    for (let i = 0; i < colorOptions.length; i++) {
+      colorOptions[i].draw();
+    }
+  
+    // Draw the speech bubble if it is active.
+    if (showBubble) {
+      // Check if the bubble duration has passed.
+      if (millis() - bubbleStartTime < bubbleDuration) {
+        push();
+        imageMode(CENTER);
+        // Tint the speech bubble with the currentColor (like the splats).
+        tint(currentColor);
+        // Position the bubble above the goblin.
+        // Adjust the position as needed. Here, it is drawn above the goblin image.
+        image(speechBubbleImage, width/6, height/2 + 150);
+        pop();
+      } else {
+        // After bubbleDuration, stop showing the bubble.
+        showBubble = false;
+      }
+    }
+  }
+  
    
    // Use mouse clicks to select a splat option
    function mousePressed() {
@@ -418,6 +451,7 @@
    
            // Update the goblin's expression on selection
            goblin.updateExpression();
+           triggerSpeechBubble();
            break; // Only process one splat click per mouse press.
          }
        }
