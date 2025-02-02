@@ -15,11 +15,14 @@
    
    let splatImages = []; // global array for the splat images
    let janesplatImages = []; // global array for the new splat images
+   let goblinImage;
+
    
    /* ============================================
       p5.js Preload Function
       ============================================ */
       function preload() {
+        goblinImage = loadImage("images/goblin/gobbase.png");
         // Load the three images
         janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
@@ -60,46 +63,49 @@
    }
    
    class Goblin {
-     constructor() {
-       this.x = width/2-width/(6*2);
-       this.y = height/2 - 100;
-       this.width = width/6;
-       this.height = height/2;
-       this.cornerRadius = 25;
-       this.expression = "(^ _ ^)/"; // Default expression
-     }
-   
-     updateExpression() {
-       if (gameWon) {
-         this.expression = "(｡♥‿♥｡)";
-       } else if (rankLatest == 0) {
-         this.expression = "(^ _ ^)/";
-       } else {
-         if (rankPrevious <= 1) {
-           if (rankLatest == 1) this.expression = "(*^▽^*)";
-           if (rankLatest == 2) this.expression = "( •᷄ὤ•᷅)";
-           if (rankLatest == 3) this.expression = "(・□・; )";
-         } else if (rankPrevious == 2) {
-           if (rankLatest == 1) this.expression = "(*^▽^*)";
-           if (rankLatest == 2) this.expression = "(´д｀; )";
-           if (rankLatest == 3) this.expression = "(；¬＿¬)";
-         } else {
-           if (rankLatest == 1) this.expression = "(*•̀ᴗ•́*)و ";
-           if (rankLatest == 2) this.expression = "(´д｀; )";
-           if (rankLatest == 3) this.expression = "(!'►,◄) ┌П┐";
-         }
-       }
-     }
-   
-     draw() {
-       fill(color(65, 146, 75));
-       rect(this.x, this.y, this.width, this.height, this.cornerRadius);
-       fill(0);
-       textSize(24);
-       textAlign(CENTER);
-       text(this.expression, this.x + this.width / 2, this.y + 50);
-     }
-   }
+    constructor() {
+      // No need to define width/height if we're using the natural size.
+      // We'll simply center the image.
+      this.expression = "(^ _ ^)/"; // Default expression
+    }
+  
+    updateExpression() {
+      if (gameWon) {
+        this.expression = "(｡♥‿♥｡)";
+      } else if (rankLatest == 0) {
+        this.expression = "(^ _ ^)/";
+      } else {
+        if (rankPrevious <= 1) {
+          if (rankLatest == 1) this.expression = "(*^▽^*)";
+          if (rankLatest == 2) this.expression = "( •᷄ὤ•᷅)";
+          if (rankLatest == 3) this.expression = "(・□・; )";
+        } else if (rankPrevious == 2) {
+          if (rankLatest == 1) this.expression = "(*^▽^*)";
+          if (rankLatest == 2) this.expression = "(´д｀; )";
+          if (rankLatest == 3) this.expression = "(；¬＿¬)";
+        } else {
+          if (rankLatest == 1) this.expression = "(*•̀ᴗ•́*)و ";
+          if (rankLatest == 2) this.expression = "(´д｀; )";
+          if (rankLatest == 3) this.expression = "(!'►,◄) ┌П┐";
+        }
+      }
+    }
+  
+    draw() {
+      // Set the image mode to CENTER so that the image is drawn centered.
+      imageMode(CENTER);
+      // Draw the goblin image at the center of the canvas using its natural size.
+      image(goblinImage, width / 2, 1.8* height / 3);
+      
+      // Draw the expression text for debugging or as an overlay.
+      fill(0);
+      textSize(24);
+      textAlign(CENTER);
+      // You can adjust the y position if you want the text somewhere else.
+      text(this.expression, width / 2, height / 2 + 50);
+    }
+  }
+  
    
    class ColorBox {
      constructor(x, y, width, height, colorValue) {
