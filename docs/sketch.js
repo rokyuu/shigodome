@@ -13,14 +13,18 @@
    let targetColorBox;
    let splat; // our new Splat object
    
-   let splatImage; // global variable for the splat image
+   let splatImages = []; // global array for the splat images
    
    /* ============================================
       p5.js Preload Function
       ============================================ */
    function preload() {
-     // Load your splat image (ensure the path is correct)
-     splatImage = loadImage("images/splat/splat00.png");
+     // Load all splat images from splat00.png to splat35.png
+     for (let i = 0; i < 36; i++) {
+       // Format the number as a two-digit string (e.g., "00", "01", ... "35")
+       let indexStr = nf(i, 2);
+       splatImages.push(loadImage("images/splat/splat" + indexStr + ".png"));
+     }
    }
    
    /* ============================================
@@ -139,59 +143,61 @@
       ============================================ */
    /*
      The Splat class renders your transparent PNG with a border effect.
-     It first draws a slightly larger, black-tinted version of the image as the border,
-     and then draws the original image on top.
+     It draws several border copies (with a black tint) around the main image using offsets,
+     then draws the main image on top.
+     
+     In this version, each Splat instance picks a random image from the splatImages array.
    */
-     class Splat {
-        /**
-         * @param {number} x - The x-coordinate for the center of the image.
-         * @param {number} y - The y-coordinate for the center of the image.
-         * @param {number} scale - Scale factor for the image size.
-         * @param {number} borderSize - How far from the center each border copy is drawn.
-         * @param {number} iterations - How many border copies to draw around the center.
-         */
-        constructor(x, y, scale = 1, borderSize = 10, iterations = 12) {
-          this.x = x;
-          this.y = y;
-          this.scale = scale;
-          this.borderSize = borderSize;
-          this.iterations = iterations;
-          this.img = splatImage; // splatImage should be loaded in preload()
-        }
-        
-        draw() {
-          push();
-          imageMode(CENTER);
-          tint(0); // Black tint for the border copies
-      
-          // Draw border copies around a circle
-          for (let i = 0; i < this.iterations; i++) {
-            let angle = (TWO_PI / this.iterations) * i;
-            let offsetX = cos(angle) * this.borderSize;
-            let offsetY = sin(angle) * this.borderSize;
-            image(
-              this.img,
-              this.x + offsetX,
-              this.y + offsetY,
-              this.img.width * this.scale,
-              this.img.height * this.scale
-            );
-          }
-          pop();
-          
-          // Draw the main image on top without tint
-          imageMode(CENTER);
-          image(
-            this.img,
-            this.x,
-            this.y,
-            this.img.width * this.scale,
-            this.img.height * this.scale
-          );
-        }
-      }
-      
-      
+   class Splat {
+     /**
+      * @param {number} x - The x-coordinate for the center of the image.
+      * @param {number} y - The y-coordinate for the center of the image.
+      * @param {number} scale - Scale factor for the image size.
+      * @param {number} borderSize - How far from the center each border copy is drawn.
+      * @param {number} iterations - How many border copies to draw around the center.
+      */
+     constructor(x, y, scale = 1, borderSize = 10, iterations = 12) {
+       this.x = x;
+       this.y = y;
+       this.scale = scale;
+       this.borderSize = borderSize;
+       this.iterations = iterations;
+       // Pick a random splat image from the preloaded array.
+       this.img = random(splatImages);
+     }
+     
+     draw() {
+       push();
+       imageMode(CENTER);
+       tint(0); // Black tint for the border copies
+   
+       // Draw border copies around a circle using offsets
+       for (let i = 0; i < this.iterations; i++) {
+         let angle = (TWO_PI / this.iterations) * i;
+         let offsetX = cos(angle) * this.borderSize;
+         let offsetY = sin(angle) * this.borderSize;
+         image(
+           this.img,
+           this.x + offsetX,
+           this.y + offsetY,
+           this.img.width * this.scale,
+           this.img.height * this.scale
+         );
+       }
+       pop();
+       
+       // Draw the main image on top without tint
+       imageMode(CENTER);
+       image(
+         this.img,
+         this.x,
+         this.y,
+         this.img.width * this.scale,
+         this.img.height * this.scale
+       );
+     }
+   }
+   
    /* ============================================
       Game Logic Functions
       ============================================ */
