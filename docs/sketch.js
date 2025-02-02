@@ -27,31 +27,6 @@
 
    
    /* ============================================
-<<<<<<< Updated upstream
-   p5.js Preload Function
-   ============================================ */
-function preload() {
-    goblinImages[0] = loadImage("images/goblin/gobbase.png");
-    goblinImages[1] = loadImage("images/goblin/gobhappy.png");
-    goblinImages[2] = loadImage("images/goblin/gobmid.png");
-    goblinImages[3] = loadImage("images/goblin/gobanger.png");
-    goblinImages[4] = loadImage("images/goblin/gobexite.png");
-  
-    // Load the speech bubble images
-    speechBubbleImage = loadImage("images/speechbubs/youbub.png");
-    gobbubImage = loadImage("images/speechbubs/gobbub.png"); // New image
-    
-    // Load the janesplat images
-    janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
-    janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
-    janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
-    janesplatImages.push(loadImage("images/janesplats/splat4f1.png"));
-    janesplatImages.push(loadImage("images/janesplats/splat5f1.png"));
-    janesplatImages.push(loadImage("images/janesplats/splat6f1.png"));
-  }
-  
-      
-=======
       p5.js Preload Function
       ============================================ */
       function preload() {
@@ -59,9 +34,8 @@ function preload() {
         janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
         janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
-        song = loadsound('shigodometheme.wav');
+        song = loadsound('gametheme.mp3');
       }
->>>>>>> Stashed changes
    
    /* ============================================
       Utility Functions
@@ -303,9 +277,6 @@ function triggerSpeechBubble() {
           pop();
         }
       }
-      
-      
-      
       
       
    
