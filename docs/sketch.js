@@ -27,6 +27,7 @@
 
    
    /* ============================================
+<<<<<<< Updated upstream
    p5.js Preload Function
    ============================================ */
 function preload() {
@@ -50,6 +51,17 @@ function preload() {
   }
   
       
+=======
+      p5.js Preload Function
+      ============================================ */
+      function preload() {
+        // Load the three images
+        janesplatImages.push(loadImage("images/janesplats/splat1f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat2f1.png"));
+        janesplatImages.push(loadImage("images/janesplats/splat3f1.png"));
+        song = loadsound('shigodometheme.wav');
+      }
+>>>>>>> Stashed changes
    
    /* ============================================
       Utility Functions
@@ -397,6 +409,7 @@ function triggerSpeechBubble() {
      goblin = new Goblin();
      currentColorBox = new ColorBox(200, 300, 300, 50, currentColor);
      targetColorBox = new ColorBox(50, 50, 450, 100, targetColor);
+     song.loop();
      // Start the game (which will create the color options)
      startGame();
    }
