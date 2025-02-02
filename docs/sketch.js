@@ -468,36 +468,41 @@ function draw() {
      }
    }
    
-   // You can still use keys if desired.
    function keyPressed() {
-     if (key === 's') {
-       startGame();
-     }
-     if (gameActive && (key >= '1' && key <= '3')) {
-       let index = int(key) - 1;
-       if (colorEntries[index]) {
-         currentColor = color(colorEntries[index].r, colorEntries[index].g, colorEntries[index].b);
-         currentColorBox.updateColor(currentColor);
-   
-         rankPrevious = rankLatest;
-         rankLatest = colorEntries[index].rank;
-   
-         let winDistance = euclideanDistance(
-           [red(currentColor), green(currentColor), blue(currentColor)],
-           [red(targetColor), green(targetColor), blue(targetColor)]
-         );
-   
-         if (winDistance <= 60) {
-           currentColor = targetColor;
-           currentColorBox.updateColor(targetColor);
-           winGame();
-         } else {
-           generateColorOptions();
-         }
-   
-         // Update Goblin's expression on selection
-         goblin.updateExpression();
-       }
-     }
-   }
+    // Log the key to debug whether key events are firing.
+    console.log("Key pressed:", key);
+    
+    // Convert the key to lowercase to catch both 's' and 'S'
+    if (key.toLowerCase() === 's') {
+      startGame();
+    }
+    
+    if (gameActive && (key >= '1' && key <= '3')) {
+      let index = int(key) - 1;
+      if (colorEntries[index]) {
+        currentColor = color(colorEntries[index].r, colorEntries[index].g, colorEntries[index].b);
+        currentColorBox.updateColor(currentColor);
+  
+        rankPrevious = rankLatest;
+        rankLatest = colorEntries[index].rank;
+  
+        let winDistance = euclideanDistance(
+          [red(currentColor), green(currentColor), blue(currentColor)],
+          [red(targetColor), green(targetColor), blue(targetColor)]
+        );
+  
+        if (winDistance <= 60) {
+          currentColor = targetColor;
+          currentColorBox.updateColor(targetColor);
+          winGame();
+        } else {
+          generateColorOptions();
+        }
+  
+        // Update Goblin's expression on selection
+        goblin.updateExpression();
+      }
+    }
+  }
+  
    
